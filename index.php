@@ -40,7 +40,7 @@ Layout::header();
 
 
 <div id="main_content" class="ui-widget-content" style="padding: 1em">
-    <p>Suggestions on <?php echo htmlentities($serverID) ?> channel <?php echo htmlentities($channel) ?></p>
+    <p>Suggestions on <?php echo htmlentities($serverID) ?> channel <?php echo htmlentities($channel) ?>.</p>
     <table id="votes_table" class="jtable">
         <thead>
             <tr>
@@ -52,6 +52,11 @@ Layout::header();
         <tbody id="main_data">
         </tbody>
     </table>
+    
+    <p>To add a suggestion message showbot with the command: <i>suggest <?php echo htmlentities($channel) ?> My suggestion here</i><br/>
+    Or in the channel itself: <i>!s My suggestion here</i>
+    </p>
+
 </div>
 
 <div class="ui-widget-header ui-corner-bottom" style="text-align: right; padding: 5px;">
@@ -76,14 +81,10 @@ function showAlert(msg) {
         .fadeOut(50);
 }
 
-function sendVote(event) {
-    alert(event.data.ID);
-}
-
 function setRow(row, suggestion) {
     row.empty();
     
-    row.attr("data-suggestionID", suggestion.ID);
+    row.attr("data-suggestionid", suggestion.ID);
 
     var cell = $('<td/>');
     cell.text(suggestion.Votes);
@@ -96,13 +97,12 @@ function setRow(row, suggestion) {
     cell = $('<td/>');
     cell.text(suggestion.User);
     row.append(cell);
-    row.on("click", suggestion, sendVote);
 }
 
 function fullTableInsert(data) {
     $('#main_data').empty();
     for (var i = 0; i < data.length; i++) {
-        var row = $('<tr id="row_suggestion_' + data[i].ID + ' "/>');
+        var row = $('<tr/>');
         setRow(row, data[i]);
         $('#main_data').append(row);
     }
@@ -112,10 +112,7 @@ function updateRows(data) {
     var i = 0;
     $('#main_data >tr').each(function() {
         var row = $(this)
-        if (row.attr("data-suggestionID") != data[i].ID)
-        {
-            setRow(row, data[i])
-        }
+        setRow(row, data[i])
         i++;
     });
     
@@ -161,6 +158,32 @@ function beginRefresh() {
     });
 }
 
+function processVoteResult(data) {
+    showAlert(data.Message);
+    beginRefresh();
+}
+
+function sendVote(event) {
+    var ID = this.dataset.suggestionid;
+    $.ajax({
+        url: "api.php",
+        type: "POST",
+        success: processVoteResult,
+        failure: function() {
+            showAlert("Failed to vote");
+        },
+        cache: false,
+        data: JSON.stringify({
+            ServerID: ServerID,
+            Channel: Channel,
+            Function: "vote_add",
+            SuggestionID: ID
+        }),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+    });
+}
+$(document).on("click", "#main_data >tr", sendVote);
 
 $(document).ready(function() {
     $( ".toolbarbutton" ).button();

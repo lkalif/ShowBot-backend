@@ -18,5 +18,6 @@ create index channel_index on suggestions(server_id, channel);
 create table votes (
     suggestion_id integer,
     user_ip varchar(128),
+    primary key(suggestion_id, user_ip),
     foreign key (suggestion_id) references suggestions(id) on delete cascade
 )

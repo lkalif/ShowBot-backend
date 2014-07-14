@@ -198,6 +198,28 @@ function checkAuth($req, $requireApiAuth = true)
     }
 }
 
+function vote($req)
+{
+    $ip = $_SERVER["REMOTE_ADDR"];
+    
+    // First check if this ip voted for this proposal already
+    $q = kl_str_sql("select count(*) as nr from votes where suggestion_id=!i and user_ip=!s", $req->SuggestionID, $ip);
+    
+    if (!($res = DBH::$db->query($q)) || !($row = DBH::$db->fetchRow($res)))
+    {
+        respond(false, "voting failed");
+    }
+    
+    if ($row["nr"] !== "0")
+    {
+        respond(false, "Already voted for that suggestion");
+    }
+    
+    DBH::$db->query(kl_str_sql("insert into votes(suggestion_id, user_ip) values (!i, !s)", $req->SuggestionID, $ip));
+    DBH::$db->query(kl_str_sql("update suggestions set votes = votes + 1 where id=!i", $req->SuggestionID));
+    
+    respond(true, "vote registered");
+}
 /**
  * Main
  */
@@ -270,6 +292,11 @@ switch ($func)
         header("Content-Type: application/json");
         print json_encode($res);
         die();
+        break;
+    
+    case "vote_add":
+        checkAuth($req, false);
+        vote($req);
         break;
     
     default:
