@@ -44,7 +44,8 @@ table {
 }
 
 table.jtable tr:hover, table.jtable th {
-	background: #003147 url(images/ui-bg_highlight-hard_20_2b3233_1x100.png) 50% 50% repeat-x;
+	/*background: #003147 url(images/ui-bg_highlight-hard_20_0972a5_1x100.png) 50% 50% repeat-x;*/
+	background-color: #003147;
 	color: #ffffff;
 }
 
@@ -55,7 +56,8 @@ table.jtable tr:hover {
 table.jtable {
 	border: 1px solid #005880; 
 	/* border: 1px solid #358; */
-	background: #1e1e1e url(images/ui-bg_flat_25_1e1e1e_40x100.png) 50% 50% repeat-x;
+	/*background: #1e1e1e url(images/ui-bg_flat_50_5c5c5c_40x100.png) 50% 50% repeat-x;*/
+	background-color: #1e1e1e;
 	color: #c5c5c5;
 	border-radius: 4px;
 }

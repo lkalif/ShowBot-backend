@@ -186,7 +186,7 @@ function checkAuth($req, $requireApiAuth = true)
 {
     global $ALLOWED_SERVERS, $ALLOWED_CHANNELS;
     
-    if (!isset($req->ApiAuth) || API_AUTH !== $req->ApiAuth)
+    if ($requireApiAuth && (!isset($req->ApiAuth) || API_AUTH !== $req->ApiAuth))
     {
         respond(false, "Access denied");
     }
@@ -201,8 +201,9 @@ function checkAuth($req, $requireApiAuth = true)
 /**
  * Main
  */
-$req = json_decode(file_get_contents("php://input"));
-@file_put_contents("/tmp/showbot.txt", var_export($req, true));
+$input = file_get_contents("php://input");
+$req = json_decode($input);
+@file_put_contents("/tmp/showbot.txt", var_export($input, true));
 
 if (!$req)
 {
@@ -225,7 +226,7 @@ switch ($func)
             respond(false, "Empty user or title");
         }
         checkAuth($req);
-        rateLimit("add_sug_" + $_SERVER["REMOTE_ADDR"], 1, 5);
+        //rateLimit("add_sug_" + $_SERVER["REMOTE_ADDR"], 1, 10);
         
         if ($suggestion->exists())
         {
@@ -261,6 +262,14 @@ switch ($func)
             $out .= "({$res[$i]->Votes} votes) {$res[$i]->Title} ({$res[$i]->User})\n";
         }
         respond(true, $out);
+        break;
+
+    case "web_top":
+        checkAuth($req, false);
+        $res = Sugggestion::getSorted($req->ServerID, $req->Channel);
+        header("Content-Type: application/json");
+        print json_encode($res);
+        die();
         break;
     
     default:
