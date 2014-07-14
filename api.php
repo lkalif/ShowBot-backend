@@ -60,6 +60,71 @@ class Sugggestion extends Request
 {
     public $User;
     public $Title;
+    
+    function getDigest()
+    {
+        $t = preg_replace('/[^\w]/', ' ', strtolower($this->Title));
+        $t = preg_replace('/\s+/', ' ', $t);
+        return sha1($t);
+    }
+    
+    function exists()
+    {
+        $digest = $this->getDigest();
+        $q = kl_str_sql("select count(*) as nr from suggestions where server_id=!s and channel=!s and digest=!s", $this->ServerID, $this->Channel, $digest);
+        if ($res = DBH::$db->query($q))
+        {
+            if ($row = DBH::$db->fetchRow($res))
+            {
+                return $row["nr"] !== "0";
+            }
+        }
+        
+        return false;
+    }
+    
+    function add()
+    {
+        $q = kl_str_sql("insert into suggestions(server_id, channel, digest, suggestion, user) values (!s, !s, !s, !s, !s)",
+                        $this->ServerID,
+                        $this->Channel,
+                        $this->getDigest(),
+                        $this->Title,
+                        $this->User);
+
+        if (!$res = DBH::$db->query($q))
+        {
+            return -1;
+        }
+        else
+        {
+            return DBH::$db->insertID();
+        }
+    }
+    
+    static function getSorted($serverID, $channel)
+    {
+        $ret = [];
+        $q = kl_str_sql("select * from suggestions where server_id=!s and channel=!s order by votes desc, id asc", $serverID, $channel);
+        if (!$res = DBH::$db->query($q))
+        {
+            return $ret;
+        }
+        while ($row = DBH::$db->fetchRow($res))
+        {
+            $s = new Sugggestion;
+            $s->ID = $row["id"];
+            $s->ServerID = $row["server_id"];
+            $s->Channel = $row["channel"];
+            $s->Digest = $row["digest"];
+            $s->Votes = $row["votes"];
+            $s->Title = $row["suggestion"];
+            $s->User = $row["user"];
+            $ret[] = $s;
+        }
+        
+        return $ret;
+    }
 }
 
 /**
@@ -160,28 +225,42 @@ switch ($func)
             respond(false, "Empty user or title");
         }
         checkAuth($req);
-        rateLimit("add_sug_" + $_SERVER["REMOTE_ADDR"], 1, 15);
-        respond(true, "Added, thanks!");
+        rateLimit("add_sug_" + $_SERVER["REMOTE_ADDR"], 1, 5);
+        
+        if ($suggestion->exists())
+        {
+            respond(false, "Already added");
+        }
+        
+        $id = $suggestion->add();
+        
+        if ($id == -1)
+        {
+            respond(false, "Adding suggestion failed");
+        }
+        else
+        {
+            respond(true, "Added, thanks! ($id)");
+        }
+        
         break;
     
     case "channel_reset":
         checkAuth($req);
         $r = new Request($req);
+        DBH::$db->query(kl_str_sql("delete from suggestions where server_id=!s and channel=!s", $r->ServerID, $r->Channel));
         respond(true, "channel {$r->Channel} reset");
         break;
     
     case "channel_top":
         checkAuth($req);
-        $r = new Request($req);
-        respond(true, <<<EOT
-The top five results for {$r->Channel}:
-1. Me
-2. You
-3. Somone else
-4.
-5. As you can see this function is not implemented yet ;)
-EOT
-);
+        $res = Sugggestion::getSorted($req->ServerID, $req->Channel);
+        $out = "Results:\n";
+        for ($i = 0; $i < 5 && $i < count($res); $i++)
+        {
+            $out .= "({$res[$i]->Votes} votes) {$res[$i]->Title} ({$res[$i]->User})\n";
+        }
+        respond(true, $out);
         break;
     
     default:

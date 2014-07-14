@@ -21,7 +21,7 @@ if (!in_array($serverID, $ALLOWED_SERVERS)
     || !in_array($channel, $ALLOWED_CHANNELS[$serverID]))
 {
     Layout::header();
-    echo "error";    
+    echo "Unsupported server/channel";    
     Layout::footer();
     die();
 }
@@ -40,7 +40,33 @@ Layout::header();
 
 
 <div id="main_content" class="ui-widget-content" style="padding: 1em">
-    <p>This is where the main content goes</p>
+    <p>Suggestions on <?php echo htmlentities($serverID) ?> channel <?php echo htmlentities($channel) ?></p>
+    <table id="votes_table" class="jtable">
+        <thead>
+            <tr>
+                <th>Votes</th>
+                <th>Suggestion</th>
+                <th>By</th>
+            </tr>
+        </thead>
+        <tbody id="main_data">
+            <tr class="rowhighlight">
+                <td>12</td>
+                <td>This is title suggestion 1</td>
+                <td>lkalif</td>
+            </tr>
+            <tr class="rowhighlight">
+                <td>4</td>
+                <td>This is title suggestion 2</td>
+                <td>lkalif</td>
+            </tr>
+            <tr class="rowhighlight">
+                <td>0</td>
+                <td>This is title suggestion 3</td>
+                <td>lkalif</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <div class="ui-widget-header ui-corner-bottom" style="text-align: right; padding: 5px;">

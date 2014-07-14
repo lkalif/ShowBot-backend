@@ -14,7 +14,7 @@ class DBH
 
 	function log($line)
 	{
-		return;
+		//return;
 		static $f = false;
 		static $failed = false;
 
@@ -122,7 +122,7 @@ class DBH
 
     function insertID()
     {
-        return @mysql_insert_id($this->dbh);
+		return @mysql_insert_id($this->dbh);
     }
     
 	function numRows($res)

@@ -38,6 +38,45 @@ only screen and (                min-resolution: 1.2dppx) {
 	}
 
 }
+
+table {
+    border-spacing: 0px;
+}
+
+table.jtable tr:hover, table.jtable th {
+	background: #003147 url(images/ui-bg_highlight-hard_20_2b3233_1x100.png) 50% 50% repeat-x;
+	color: #ffffff;
+}
+
+table.jtable tr:hover {
+	cursor: pointer;
+}
+
+table.jtable {
+	border: 1px solid #005880; 
+	/* border: 1px solid #358; */
+	background: #1e1e1e url(images/ui-bg_flat_25_1e1e1e_40x100.png) 50% 50% repeat-x;
+	color: #c5c5c5;
+	border-radius: 4px;
+}
+
+table.jtable a:visited {
+        color: #888;
+}
+
+table.noborder {
+    margin: 1px;
+    border: none;
+}
+
+td, th {
+    text-align: left;
+    margin: 0;
+    padding: 6px;
+    vertical-align: top;
+    display: table-cell;
+    border: none;
+}
 	</style>
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
