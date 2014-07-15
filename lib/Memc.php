@@ -40,12 +40,22 @@ class Memc
 		return self::$daemon->get($key);
 	}
 
-	static function setq($q, $data)
+	static function setq($q, $data, $expire = -1)
 	{
 		if (!self::$active) return false;
+		
+		if ($expire == -1) $expire = self::$expire;
 
 		$key = md5($q);
-		return self::$daemon->set($key, $data, self::$expire);
+		return self::$daemon->set($key, $data, $expire);
+	}
+
+	static function delq($q)
+	{
+		if (!self::$active) return false;
+		
+		$key = md5($q);
+		self::$daemon->delete($key);
 	}
 	
 	static function flush()

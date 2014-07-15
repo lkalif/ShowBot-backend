@@ -98,12 +98,25 @@ class Sugggestion extends Request
         }
         else
         {
+            self::invalidateCache($this->ServerID, $this->Channel);
             return DBH::$db->insertID();
         }
     }
     
+    static function getMKey($serverID, $channel, $prefix = "get_")
+    {
+        return $prefix . $serverID . $channel;
+    }
+    
+    static function invalidateCache($serverID, $channel)
+    {
+        Memc::$daemon->delete(self::getMKey($serverID, $channel));
+    }
+    
     static function getSorted($serverID, $channel)
     {
+        if (false !== $cached = Memc::$daemon->get(self::getMKey($serverID, $channel))) return $cached;
+        
         $ret = [];
         $q = kl_str_sql("select * from suggestions where server_id=!s and channel=!s order by votes desc, id asc", $serverID, $channel);
         if (!$res = DBH::$db->query($q))
@@ -123,6 +136,7 @@ class Sugggestion extends Request
             $ret[] = $s;
         }
         
+        Memc::$daemon->set(self::getMKey($serverID, $channel), $ret, 30);
         return $ret;
     }
 }
@@ -214,12 +228,21 @@ function vote($req)
     {
         respond(false, "Already voted for that suggestion");
     }
+
+    $q = kl_str_sql("select server_id, channel from suggestions where id=!i", $req->SuggestionID);
+    
+    if (!($res = DBH::$db->query($q)) || !($row = DBH::$db->fetchRow($res)))
+    {
+        respond(false, "voting failed");
+    }
     
     DBH::$db->query(kl_str_sql("insert into votes(suggestion_id, user_ip) values (!i, !s)", $req->SuggestionID, $ip));
     DBH::$db->query(kl_str_sql("update suggestions set votes = votes + 1 where id=!i", $req->SuggestionID));
-    
+    Sugggestion::invalidateCache($row["server_id"], $row["channel"]);
     respond(true, "vote registered");
 }
+
+
 /**
  * Main
  */
@@ -248,7 +271,7 @@ switch ($func)
             respond(false, "Empty user or title");
         }
         checkAuth($req);
-        //rateLimit("add_sug_" + $_SERVER["REMOTE_ADDR"], 1, 10);
+        rateLimit("add_sug_" + $_SERVER["REMOTE_ADDR"], 1, 10);
         
         if ($suggestion->exists())
         {
@@ -273,6 +296,7 @@ switch ($func)
         $r = new Request($req);
         DBH::$db->query(kl_str_sql("delete from suggestions where server_id=!s and channel=!s", $r->ServerID, $r->Channel));
         respond(true, "channel {$r->Channel} reset");
+        Sugggestion::invalidateCache($r->ServerID, $r->Channel);
         break;
     
     case "channel_top":

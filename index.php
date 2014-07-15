@@ -53,7 +53,7 @@ Layout::header();
         </tbody>
     </table>
     
-    <p>To add a suggestion message showbot with the command: <i>suggest <?php echo htmlentities($channel) ?> My suggestion here</i><br/>
+    <p style="font-size: 12px">To add a suggestion message showbot with the command: <i>suggest <?php echo htmlentities($channel) ?> My suggestion here</i><br/>
     Or in the channel itself: <i>!s My suggestion here</i>
     </p>
 
