@@ -13,7 +13,7 @@ class Layout
 	{
 ?>
 <!doctype html>
-<html lang="us">
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<title>ShowBot</title>
@@ -86,7 +86,7 @@ td, th {
 <body>
 	<div>
 		<div style="display: inline-block">
-			<img src="images/logo.png" title="Logo" />
+			<img src="images/logo.png" alt="Logo" />
 		</div>
 		<div style="float: right;">
 			<span style="font-size: 200%;">SHOWBOT</span>
