@@ -17,6 +17,7 @@ class Layout
 <head>
 	<meta charset="utf-8">
 	<title>ShowBot</title>
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 	<style>
 	body{
 		font-family: "Verdana", sans-serif;
