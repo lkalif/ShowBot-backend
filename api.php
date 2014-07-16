@@ -248,7 +248,7 @@ function vote($req)
  */
 $input = file_get_contents("php://input");
 $req = json_decode($input);
-@file_put_contents("/tmp/showbot.txt", var_export($input, true));
+// @file_put_contents("/tmp/showbot.txt", var_export($input, true));
 
 if (!$req)
 {
