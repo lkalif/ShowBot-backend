@@ -74,28 +74,64 @@ var autoRefresh = true;
 
 function showAlert(msg) {
     $("#msg_area")
+        .stop()
         .text(msg)
         .fadeIn(100)
         .delay(3000)
         .fadeOut(50);
 }
 
-function setRow(row, suggestion) {
-    row.empty();
+$.fn.animateHighlight = function(highlightColor, duration) {
+    var highlightBg = highlightColor || "#0ff";
+    var durationMs = duration || 150;
+    var elem = $(this);
+    var originalBg = elem.css("background-color");
+    elem.css("background-image", "none");
+    if (!elem.inAnimateHighlight) {
+        elem.inAnimateHighlight = true;
+        elem
+            .stop()
+            .css("background-color", highlightBg)
+            .animate({backgroundColor: originalBg}, durationMs, "swing", function() {
+                elem.inAnimateHighlight = false;
+                elem.removeAttr("style");
+            });
+    }
+};
+
+function setRow(row, suggestion, animateHighlight) {
+    var oldID = row.attr("data-suggestionid");
+    var oldVotes = $("td:first", row).text();
+    var currIndex = row.index();
+    var oldIndex = $("#main_data >tr[data-suggestionid=" + suggestion.ID + "]").index();
     
+    row.empty();
     row.attr("data-suggestionid", suggestion.ID);
 
-    var cell = $('<td/>');
-    cell.text(suggestion.Votes);
-    row.append(cell);
+    var votesCell = $('<td/>');
+    votesCell.text(suggestion.Votes);
+    row.append(votesCell);
     
-    cell = $('<td/>');
+    var cell = $('<td/>');
     cell.text(suggestion.Title);
     row.append(cell);
 
     cell = $('<td/>');
     cell.text(suggestion.User);
     row.append(cell);
+    
+    if (animateHighlight) {
+        if (oldID == suggestion.ID){
+            if (oldVotes != suggestion.Votes){
+                votesCell.animateHighlight();
+            }
+        }
+        else {
+            if (oldIndex != -1 && currIndex < oldIndex) {
+                row.animateHighlight();
+            }
+        }
+    }
 }
 
 function fullTableInsert(data) {
@@ -111,7 +147,7 @@ function updateRows(data) {
     var i = 0;
     $('#main_data >tr').each(function() {
         var row = $(this)
-        setRow(row, data[i])
+        setRow(row, data[i], true)
         i++;
     });
     

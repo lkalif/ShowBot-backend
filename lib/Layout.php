@@ -80,6 +80,7 @@ td, th {
 	</style>
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="jquery.color-2.1.2.min.js"></script>
 	<link href="showbot.css" rel="stylesheet">
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
 </head>
