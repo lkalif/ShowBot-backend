@@ -77,6 +77,11 @@ td, th {
     display: table-cell;
     border: none;
 }
+
+.allcaps {
+	text-transform: uppercase;
+}
+
 	</style>
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>

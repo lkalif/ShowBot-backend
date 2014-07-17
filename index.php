@@ -33,6 +33,7 @@ Layout::header();
     <div id="radioset" style="display: inline-block">
         <input type="radio" id="refresh_on"  value="on"  name="autorefresh" checked="checked"><label for="refresh_on">Autorefresh: ON</label>
         <input type="radio" id="refresh_off" value="off" name="autorefresh"><label for="refresh_off">Autorefresh: OFF</label>
+        <input type="checkbox" id="all_caps"><label for="all_caps">CAPS</label>
     </div>
     <button id="refresh_button">Refresh Now</button>
     <div id="msg_area" style="display: none; padding: 0.2em 0.5em; margin-top: 0.4em; float: right;" class="ui-state-error"></div>
@@ -87,6 +88,7 @@ var Channel = "<?php echo htmlentities($channel); ?>";
 var refreshTimer = 0;
 var refreshInterval = 5000;
 var autoRefresh = true;
+var allCaps = false;
 
 function showAlert(msg) {
     $("#msg_area")
@@ -128,9 +130,13 @@ function setRow(row, suggestion, animateHighlight) {
     votesCell.text(suggestion.Votes);
     row.append(votesCell);
     
-    var cell = $('<td/>');
+    var cell = $('<td class="title"/>');
     cell.text(suggestion.Title);
+    if (allCaps) {
+        cell.addClass("allcaps");
+    }
     row.append(cell);
+    
 
     cell = $('<td/>');
     cell.text(suggestion.User);
@@ -254,6 +260,16 @@ $(document).ready(function() {
 
     $("#about_btn").on("click", function() {
         $("#about_dialog").dialog("open" );
+    });
+    
+    $("#all_caps").on("change", function() {
+        if (this.checked) {
+            allCaps = true;
+            $(".title").addClass("allcaps");
+        } else {
+            allCaps = false;
+            $(".title").removeClass("allcaps");
+        }
     });
     
     $( 'input[name="autorefresh"]:radio' )
