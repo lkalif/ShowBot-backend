@@ -83,7 +83,7 @@ function showAlert(msg) {
 
 $.fn.animateHighlight = function(highlightColor, duration) {
     var highlightBg = highlightColor || "#0ff";
-    var durationMs = duration || 150;
+    var durationMs = duration || 250;
     var elem = $(this);
     var originalBg = elem.css("background-color");
     elem.css("background-image", "none");
@@ -155,12 +155,13 @@ function updateRows(data) {
         var row = $('<tr id="row_suggestion_' + data[i].ID + ' "/>');
         setRow(row, data[i]);
         $('#main_data').append(row);
+        row.animateHighlight();
     }
 }
 
 function processResult(data) {
     var nRows = $('#main_data >tr').length;
-    if (nRows > data.length)
+    if (nRows == 0 || nRows > data.length)
     {
         fullTableInsert(data);
     }
