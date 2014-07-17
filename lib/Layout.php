@@ -86,11 +86,8 @@ td, th {
 </head>
 <body>
 	<div>
-		<div style="display: inline-block">
-			<img src="images/logo.png" alt="Logo" />
-		</div>
-		<div style="float: right;">
-			<span style="font-size: 200%;">SHOWBOT</span>
+		<div style="display: inline-block; margin-bottom: 10px;">
+			<img src="images/showbot.png" alt="ShowBot by sebgonz" />
 		</div>
 	</div>
 <?php		
