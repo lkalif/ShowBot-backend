@@ -271,7 +271,7 @@ switch ($func)
             respond(false, "Empty user or title");
         }
         checkAuth($req);
-        rateLimit("add_sug_" . $_SERVER["REMOTE_ADDR"], 1, 10);
+        rateLimit("add_sug_" . $suggestion->User, 1, 10);
         
         if ($suggestion->exists())
         {
