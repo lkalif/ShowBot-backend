@@ -162,8 +162,7 @@ function processVoteResult(data) {
     beginRefresh();
 }
 
-function sendVote(event) {
-    var ID = this.dataset.suggestionid;
+function sendVote(ID) {
     $.ajax({
         url: "api.php",
         type: "POST",
@@ -182,7 +181,13 @@ function sendVote(event) {
         dataType: "json",
     });
 }
-$(document).on("click", "#main_data >tr", sendVote);
+$(document).on("click", "#main_data >tr", function() {
+    var sel = getSelection().toString();
+    if (!sel)
+    {
+        sendVote(this.dataset.suggestionid);
+    }
+});
 
 $(document).ready(function() {
     $( ".toolbarbutton" ).button();
