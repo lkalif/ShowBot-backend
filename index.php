@@ -76,7 +76,7 @@ function showAlert(msg) {
     $("#msg_area")
         .text(msg)
         .fadeIn(100)
-        .delay(2000)
+        .delay(3000)
         .fadeOut(50);
 }
 
@@ -142,7 +142,7 @@ function beginRefresh() {
         url: "api.php",
         type: "POST",
         success: processResult,
-        failure: function() {
+        error: function() {
             inRefresh = false;
             showAlert("Failed to get list");
         },
@@ -168,7 +168,7 @@ function sendVote(event) {
         url: "api.php",
         type: "POST",
         success: processVoteResult,
-        failure: function() {
+        error: function() {
             showAlert("Failed to vote");
         },
         cache: false,
