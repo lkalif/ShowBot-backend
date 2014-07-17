@@ -59,8 +59,24 @@ Layout::header();
 </div>
 
 <div class="ui-widget-header ui-corner-bottom" style="text-align: right; padding: 5px;">
-    <a class="toolbarbutton" href="http://irc.t2t2.eu/">chatrealm</a>
-    <a class="toolbarbutton" href="http://diamondclub.tv/">diamondclub.tv</a>
+    <a id="about_btn" class="toolbarbutton" href="javascript:void(0)">about</a>
+    <a class="toolbarbutton" href="http://irc.t2t2.eu/" target="_blank">chatrealm</a>
+    <a class="toolbarbutton" href="http://diamondclub.tv/" target="_blank">diamondclub.tv</a>
+</div>
+
+<div id="about_dialog" style="display: none" title="About ShowBot">
+    <p><b>ShowBot 1.0</b><br/>
+    IRC channel suggestion catching and voting system<br/>
+    <small>Copyright &copy; 2014 Latif Khalifa (<a href="http://twitter.com/lkalif" target="_blank">lkalif</a>)</small></p>
+    
+    <p>Source code available on Github for
+    the <a href="https://github.com/lkalif/ShowBot-backend" target="_blank">backend</a>
+    and the <a href="https://github.com/lkalif/ShowBot-backend" target="_blank">IRC bot itself</a>.
+    ShowBot is released under the terms of the
+    <a href="http://opensource.org/licenses/MIT" target="_blank">MIT License</a>
+    </p>
+    
+    <p>Logo by Sebastian (<a href="http://twitter.com/sebgonz" target="_blank">sebgonz</a>).</p>
 </div>
 
 <script>
@@ -227,9 +243,18 @@ $(document).on("click", "#main_data >tr", function() {
 });
 
 $(document).ready(function() {
-    $( ".toolbarbutton" ).button();
+    $(".toolbarbutton").button();
 
     $("#radioset").buttonset();
+    
+    $("#about_dialog").dialog({
+        autoOpen: false,
+        buttons: [ { text: "Ok", click: function() { $( this ).dialog( "close" )}}],
+        });
+
+    $("#about_btn").on("click", function() {
+        $("#about_dialog").dialog("open" );
+    });
     
     $( 'input[name="autorefresh"]:radio' )
         .on("change", function() {
