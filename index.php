@@ -72,7 +72,7 @@ Layout::header();
     
     <p>Source code available on Github for
     the <a href="https://github.com/lkalif/ShowBot-backend" target="_blank">backend</a>
-    and the <a href="https://github.com/lkalif/ShowBot-backend" target="_blank">IRC bot itself</a>.
+    and the <a href="https://github.com/lkalif/ShowBot" target="_blank">IRC bot itself</a>.
     ShowBot is released under the terms of the
     <a href="http://opensource.org/licenses/MIT" target="_blank">MIT License</a>
     </p>
