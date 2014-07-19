@@ -64,7 +64,7 @@ class Sugggestion extends Request
     function getDigest()
     {
         $t = preg_replace('/[^\w]/', ' ', strtolower($this->Title));
-        $t = preg_replace('/\s+/', ' ', $t);
+        $t = preg_replace('/\s+/', ' ', trim($t));
         return sha1($t);
     }
     
@@ -286,7 +286,7 @@ switch ($func)
         }
         else
         {
-            respond(true, "Added, thanks! ($id)");
+            respond(true, "Added, thanks! " . URL_ROOT . "/?server_id=" . urlencode($suggestion->ServerID) . "&channel=" . urlencode($suggestion->Channel));
         }
         
         break;
@@ -295,8 +295,8 @@ switch ($func)
         checkAuth($req);
         $r = new Request($req);
         DBH::$db->query(kl_str_sql("delete from suggestions where server_id=!s and channel=!s", $r->ServerID, $r->Channel));
-        respond(true, "channel {$r->Channel} reset");
         Sugggestion::invalidateCache($r->ServerID, $r->Channel);
+        respond(true, "channel {$r->Channel} reset");
         break;
     
     case "channel_top":
