@@ -10,8 +10,10 @@
 define("SITE_ROOT", dirname(__file__));
 require_once SITE_ROOT . "/lib/init.php";
 
+// If not specified set server id to diamondclub and channel to #chat
 $channel = isset($_REQUEST['channel']) ? (string)$_REQUEST['channel'] : "#chat";
 $serverID = isset($_REQUEST['server_id']) ? (string)$_REQUEST['server_id']: "diamondclub";
+
 if (strlen($channel) && $channel[0] != "#")
 {
     $channel = "#" . $channel;
@@ -123,6 +125,17 @@ function setRow(row, suggestion, animateHighlight) {
     var currIndex = row.index();
     var oldIndex = $("#main_data >tr[data-suggestionid=" + suggestion.ID + "]").index();
     
+    if (oldID == suggestion.ID) {
+        var firstCell = $("td:first", row);
+        if (oldVotes != suggestion.Votes) {
+            firstCell.text(suggestion.Votes);
+            if (animateHighlight) {
+                firstCell.animateHighlight();
+            }
+        }
+        return;
+    }
+    
     row.empty();
     row.attr("data-suggestionid", suggestion.ID);
 
@@ -142,17 +155,8 @@ function setRow(row, suggestion, animateHighlight) {
     cell.text(suggestion.User);
     row.append(cell);
     
-    if (animateHighlight) {
-        if (oldID == suggestion.ID){
-            if (oldVotes != suggestion.Votes){
-                votesCell.animateHighlight();
-            }
-        }
-        else {
-            if (oldIndex != -1 && currIndex < oldIndex) {
-                row.animateHighlight();
-            }
-        }
+    if (animateHighlight && oldIndex != -1 && currIndex < oldIndex) {
+        row.animateHighlight();
     }
 }
 
