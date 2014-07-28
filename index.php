@@ -91,6 +91,15 @@ var refreshTimer = 0;
 var refreshInterval = 5000;
 var autoRefresh = true;
 var allCaps = false;
+var dragging = false;
+
+function isiOS(){
+    return (
+        (navigator.platform.indexOf("iPhone") != -1) ||
+        (navigator.platform.indexOf("iPad") != -1) ||
+        (navigator.platform.indexOf("iPod") != -1)
+    );
+}
 
 function showAlert(msg) {
     $("#msg_area")
@@ -244,6 +253,24 @@ function sendVote(ID) {
         dataType: "json",
     });
 }
+
+if (isiOS()) {
+
+    $(document).on("touchstart", "#main_data >tr", function() {
+        dragging = false;
+    });
+    
+    $(document).on("touchmove", "#main_data >tr", function() {
+        dragging = true;
+    });
+    
+    $(document).on("touchend", "#main_data >tr", function() {
+        if (!dragging) {
+            sendVote(this.dataset.suggestionid);
+        }
+    });
+}
+
 $(document).on("click", "#main_data >tr", function() {
     var sel = getSelection().toString();
     if (!sel)
