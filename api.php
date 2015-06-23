@@ -35,6 +35,7 @@ class Request
     public $ApiAuth;
     public $ServerID;
     public $Channel;
+    public $Title;
 
     function __construct($json = null)
     {
@@ -297,6 +298,14 @@ switch ($func)
         DBH::$db->query(kl_str_sql("delete from suggestions where server_id=!s and channel=!s", $r->ServerID, $r->Channel));
         Sugggestion::invalidateCache($r->ServerID, $r->Channel);
         respond(true, "channel {$r->Channel} reset");
+        break;
+
+    case "title_delete":
+        checkAuth($req);
+        $r = new Request($req);
+        DBH::$db->query(kl_str_sql("delete from suggestions where server_id=!s and channel=!s and suggestion=!s", $r->ServerID, $r->Channel, $r->Title));
+        Sugggestion::invalidateCache($r->ServerID, $r->Channel);
+        respond(true, "title {$r->Title} on channel {$r->Channel} deleted");
         break;
     
     case "channel_top":
